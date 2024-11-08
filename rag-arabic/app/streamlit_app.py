@@ -42,7 +42,7 @@ def main():
         type=['docx']
     )
     
-    if uploaded_file:
+    if uploaded_file and st.session_state.rag_system == None:
         try:
             # Save uploaded file temporarily
             with open("temp_doc.docx", "wb") as f:
