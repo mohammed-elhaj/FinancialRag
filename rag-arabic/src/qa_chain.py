@@ -2,6 +2,20 @@ from typing import Dict, List, Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.vectorstores import Chroma
+from langchain.prompts import PromptTemplate
+
+# Define a custom prompt template
+template = """You are an AI assistant for answering questions about Government Tenders and Procurement System.
+You are given the following extracted parts of a long document and a question. Provide a conversational answer in Arabic language only.
+If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
+If the question is not about Government Tenders and Procurement System, politely inform them that you are tuned to only answer questions about Government Tenders and Procurement System.
+Question: {question}
+=========
+{context}
+=========
+Answer in Arabic in Markdown:"""
+QA_PROMPT = PromptTemplate(template=template, input_variables=[
+                           "question", "context"])
 
 class QAChainHandler:
     """Handles question-answering chain operations."""
@@ -21,7 +35,8 @@ class QAChainHandler:
             llm=self.llm,
             retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
             return_source_documents=True,
-            verbose=True
+            verbose=True,
+            combine_docs_chain_kwargs={"prompt": QA_PROMPT}
         )
 
     def query(self, question: str, chat_history: List = None) -> Dict[str, Any]:
