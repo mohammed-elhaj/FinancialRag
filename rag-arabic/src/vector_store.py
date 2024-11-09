@@ -19,9 +19,12 @@ class VectorStoreHandler:
             model_kwargs={'device': 'cpu'},
             encode_kwargs={'normalize_embeddings': True}
         )
-        
+
+        # Get embedding dimension
+        self.embedding_dimension = len(self.embeddings.embed_query("test"))
+
         # Initialize ChromaDB client
-        self._init_chroma_client()
+        # self._init_chroma_client()
 
     def _init_chroma_client(self):
         """Initialize or reset ChromaDB client."""
@@ -43,31 +46,33 @@ class VectorStoreHandler:
             anonymized_telemetry=False
         ))
         
-        # Get embedding dimension
-        self.embedding_dimension = len(self.embeddings.embed_query("test"))
-
+        
     def create_vectorstore(self, chunks: List[str]) -> Chroma:
         """Create or update vector store from text chunks."""
         try:
             # Delete existing collection if it exists
-            try:
-                self.chroma_client.delete_collection(self.collection_name)
-            except ValueError:
-                pass
+            # try:
+            #     self.chroma_client.delete_collection(self.collection_name)
+            # except ValueError:
+            #     pass
             
             # Create new collection
-            self.chroma_client.create_collection(
-                name=self.collection_name,
-                metadata={"hnsw:space": "cosine", "dimension": self.embedding_dimension}
-            )
-            
+            # self.chroma_client.create_collection(
+            #     name=self.collection_name,
+            #     metadata={"hnsw:space": "cosine", "dimension": self.embedding_dimension}
+            # )
+            if os.path.exists(self.persist_directory):
+              return Chroma(persist_directory=self.persist_directory,
+              embedding_function=self.embeddings,
+              collection_name=self.collection_name
+              )
             # Create vector store
             vectorstore = Chroma.from_texts(
                 texts=chunks,
                 embedding=self.embeddings,
                 persist_directory=self.persist_directory,
                 collection_metadata={"dimension": self.embedding_dimension},
-                client=self.chroma_client,
+                # client=self.chroma_client,
                 collection_name=self.collection_name
             )
             
