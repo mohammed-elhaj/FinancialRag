@@ -32,7 +32,6 @@ def main():
     )
     if language != st.session_state.language:
         st.session_state.language = language
-        st.experimental_rerun()
     
     st.title(get_string("title"))
     
