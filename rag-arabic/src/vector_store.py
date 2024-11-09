@@ -74,3 +74,21 @@ class VectorStoreHandler:
             return vectorstore
         except Exception as e:
             raise Exception(f"Error creating vector store: {str(e)}")
+
+    def load_vectorstore(self) -> Chroma:
+        """Load an existing vector store if it exists in the database."""
+        try:
+            # Retrieve the existing collection
+            collection = self.chroma_client.get_collection(self.collection_name)
+            
+            # Load the vector store from the existing collection
+            vectorstore = Chroma(
+                persist_directory=self.persist_directory,
+                embedding=self.embeddings,
+                client=self.chroma_client,
+                collection_name=self.collection_name
+            )
+            
+            return vectorstore
+        except ValueError:
+            raise Exception(f"Collection '{self.collection_name}' does not exist in the database.")
