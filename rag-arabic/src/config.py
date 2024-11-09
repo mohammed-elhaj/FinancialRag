@@ -11,7 +11,7 @@ class RAGConfig:
     chunk_size: int = 500
     chunk_overlap: int = 50
     temperature: float = 0.3
-    persist_directory: str = "/content/FinancialRag/rag-arabic/chroma_db"
+    persist_directory: str = os.path.abspath("./chroma_db")
     collection_name: str = "arabic_docs"
 
 def load_config() -> RAGConfig:
