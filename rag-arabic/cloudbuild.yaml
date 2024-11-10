@@ -1,0 +1,33 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/rag-arabic', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/rag-arabic']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'rag-arabic'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/rag-arabic'
+      - '--region'
+      - 'me-west1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--set-env-vars'
+      - 'GOOGLE_API_KEY=AIzaSyCS1BffW1boMTsHsg5tW_LJRIErIWxJ0EI'
+
+images:
+  - 'gcr.io/$PROJECT_ID/rag-arabic'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
