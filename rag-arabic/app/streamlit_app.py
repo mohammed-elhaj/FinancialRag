@@ -14,7 +14,7 @@ def init_session_state():
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
     if 'language' not in st.session_state:
-        st.session_state.language = 'en'
+        st.session_state.language = 'ar'
 
 def get_string(key: str) -> str:
     """Get UI string in current language."""
