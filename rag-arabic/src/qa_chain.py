@@ -5,15 +5,15 @@ from langchain_community.vectorstores import Chroma
 from langchain.prompts import PromptTemplate
 
 # Define a custom prompt template
-template = """You are an AI assistant for answering questions about Government Tenders and Procurement System.
-You are given the following extracted parts of a long document and a question. Provide a conversational answer in Arabic language only.
-If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
-If the question is not about Government Tenders and Procurement System, politely inform them that you are tuned to only answer questions about Government Tenders and Procurement System.
-Question: {question}
+template = """أنت مساعد ذكاء اصطناعي متخصص للإجابة على الأسئلة حول نظام المنافسات والمشتريات الحكومية ولائحته التنفيذية في المملكة العربية السعودية.
+أنت تتلقى مقتطفات من مستند طويل وسؤال يتعلق بهذا النظام. قدم إجابة محادثية ودقيقة باللغة العربية فقط بناءً على المقتطفات المقدمة.
+إذا لم يكن لديك إجابة دقيقة، قل فقط: "عذرًا، ليس لدي معلومات كافية للإجابة على هذا السؤال." لا تحاول تقديم إجابة غير مؤكدة.
+إذا كان السؤال خارج نطاق نظام المنافسات والمشتريات الحكومية، فأخبر المستخدم بأدب أنك متخصص في الإجابة عن هذا النظام فقط.
+السؤال: {question}
 =========
 {context}
 =========
-Answer in Arabic in Markdown:"""
+الإجابة باللغة العربية وبصيغة Markdown:"""
 QA_PROMPT = PromptTemplate(template=template, input_variables=[
                            "question", "context"])
 
@@ -33,7 +33,7 @@ class QAChainHandler:
         """Set up the question-answering chain."""
         self.qa_chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
-            retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
+            retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
             return_source_documents=True,
             verbose=True,
             combine_docs_chain_kwargs={"prompt": QA_PROMPT}
