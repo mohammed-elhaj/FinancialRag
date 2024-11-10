@@ -13,7 +13,7 @@ UI_STRINGS = {
         "error_query": "Error processing query"
     },
     "ar": {
-        "title": "نظام أسئلة وأجوبة للمستندات العربية",
+        "title": " نظام المنافسات و المشتريات الحكومية ولائحته التنفيذية",
         "upload_prompt": "قم بتحميل ملف Word الخاص بك",
         "query_placeholder": "اكتب سؤالك هنا...",
         "submit_button": "إرسال السؤال",
