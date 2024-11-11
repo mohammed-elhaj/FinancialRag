@@ -10,3 +10,4 @@ torch>=2.0.0
 transformers>=4.30.0
 protobuf>=3.20.0
 langchain_community
+langchain_openai
