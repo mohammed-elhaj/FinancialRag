@@ -16,7 +16,7 @@ class ArabicRAGSystem:
         self.vector_handler = VectorStoreHandler(
             persist_directory=config.persist_directory,
             collection_name=config.collection_name,
-            embedding_model=config.embedding_model
+            openai_api_key=config.openai_api_key
         )
         
         self.qa_handler = QAChainHandler(
