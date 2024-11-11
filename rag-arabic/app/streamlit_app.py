@@ -1,7 +1,11 @@
 import streamlit as st
+import os
+import sys
+from ui_strings import UI_STRINGS
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.config import load_config
 from src.rag_system import ArabicRAGSystem
-from ui_strings import UI_STRINGS
+
 
 def init_session_state():
     """Initialize session state variables."""

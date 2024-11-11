@@ -1,5 +1,4 @@
-UI_STRINGS = 
-{
+UI_STRINGS = {
     "en": {
         "title": "Document Q&A System",
         "query_placeholder": "Enter your question here...",
