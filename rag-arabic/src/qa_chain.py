@@ -20,7 +20,7 @@ QA_PROMPT = PromptTemplate(template=template, input_variables=[
 class QAChainHandler:
     """Handles question-answering chain operations."""
     
-    def __init__(self, google_api_key: str, openai_api_key : str, model_name: str, temperature: float):
+    def __init__(self,  openai_api_key : str, model_name: str, temperature: float):
         # self.llm = ChatGoogleGenerativeAI(
         #     model=model_name,
         #     google_api_key=google_api_key,
