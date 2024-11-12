@@ -10,7 +10,7 @@ class ArabicRAGSystem:
     def __init__(self, config: RAGConfig):
         """Initialize the RAG system with configuration."""
         self.config = config
-        genai.configure(api_key=config.google_api_key)
+       # genai.configure(api_key=config.openai_api_key)
         
         # Initialize components
         self.vector_handler = VectorStoreHandler(
@@ -20,7 +20,7 @@ class ArabicRAGSystem:
         )
         
         self.qa_handler = QAChainHandler(
-            google_api_key=config.google_api_key,
+            openai_api_key=config.openai_api_key,
             model_name=config.llm_model,
             temperature=config.temperature
         )
