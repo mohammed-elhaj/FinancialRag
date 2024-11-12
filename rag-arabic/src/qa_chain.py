@@ -3,6 +3,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+
 
 # Define a custom prompt template
 template = """أنت مساعد ذكاء اصطناعي متخصص للإجابة على الأسئلة حول نظام المنافسات والمشتريات الحكومية ولائحته التنفيذية في المملكة العربية السعودية.
@@ -28,7 +30,7 @@ class QAChainHandler:
         #     convert_system_message_to_human=True
         # )
         self.llm = ChatOpenAI(
-            openai_api_key=self.openai_api_key,
+            openai_api_key=openai_api_key,
             model_name="gpt-4-turbo-preview",
             temperature=0,
             max_tokens=2000,
