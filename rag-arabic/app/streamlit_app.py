@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 import sys
 from ui_strings import UI_STRINGS
@@ -8,7 +9,18 @@ from src.rag_system import ArabicRAGSystem
 def init_session_state():
     """Initialize session state variables."""
     if 'rag_system' not in st.session_state:
-@@ -25,48 +24,66 @@ def main():
+        config = load_config()
+        st.session_state.rag_system = ArabicRAGSystem(config)
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
+    if 'language' not in st.session_state:
+        st.session_state.language = 'ar'
+
+def get_string(key: str) -> str:
+    """Get UI string in current language."""
+    return UI_STRINGS[st.session_state.language][key]
+
+def main():
     """Main Streamlit application."""
     st.set_page_config(page_title="Arabic Document Q&A", layout="wide")
     init_session_state()
@@ -54,3 +66,6 @@ def init_session_state():
                 
             except Exception as e:
                 st.error(f"{get_string('error_query')}: {str(e)}")
+
+if __name__ == "__main__":
+    main()
