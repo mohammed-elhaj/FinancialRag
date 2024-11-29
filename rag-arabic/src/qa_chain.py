@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.vectorstores import Chroma
-from templates import get_prompt_template
+from .templates import get_prompt_template
 
 class QAChainHandler:
     """Handles question-answering chain operations with language support."""
