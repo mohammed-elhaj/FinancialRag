@@ -1,69 +1,70 @@
 from typing import Dict, List, Any
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.vectorstores import Chroma
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-
-
-# Define a custom prompt template
-template = """أنت مساعد متخصص في الإجابة على الأسئلة المتعلقة بنظام المنافسات والمشتريات الحكومية في المملكة العربية السعودية.
-استخدم المعلومات التالية للإجابة على السؤال. إذا لم تكن المعلومات كافية، قل ذلك بوضوح.
-المعلومات المتوفرة:
-{context}
-
-السؤال: {question}
-
-قم بتقديم إجابة دقيقة ومباشرة مع ذكر رقم المادة والفصل ذي الصلة:"""
-
-
-QA_PROMPT = PromptTemplate(template=template, input_variables=[
-                           "question", "context"])
+from templates import get_prompt_template
 
 class QAChainHandler:
-    """Handles question-answering chain operations."""
+    """Handles question-answering chain operations with language support."""
     
-    def __init__(self,  openai_api_key : str, model_name: str, temperature: float):
-        # self.llm = ChatGoogleGenerativeAI(
-        #     model=model_name,
-        #     google_api_key=google_api_key,
-        #     temperature=temperature,
-        #     convert_system_message_to_human=True
-        # )
+    def __init__(self, openai_api_key: str, model_name: str, temperature: float, lang: str):
+        self.lang = lang
         self.llm = ChatOpenAI(
             openai_api_key=openai_api_key,
-            model_name="gpt-4-turbo-preview",
-            temperature=0,
-            max_tokens=2000,
-            presence_penalty=0.3,
-            frequency_penalty=0.3
+            model_name=model_name,
+            temperature=temperature
         )
         self.qa_chain = None
+        self.prompt_template = get_prompt_template(lang)
 
     def setup_chain(self, vectorstore: Chroma):
         """Set up the question-answering chain."""
         self.qa_chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
-            retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
+            retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
             return_source_documents=True,
             verbose=True,
-            combine_docs_chain_kwargs={"prompt": QA_PROMPT}
+            combine_docs_chain_kwargs={"prompt": self.prompt_template}
         )
+
+    def format_source_document(self, doc) -> str:
+        """Format source document for display with metadata based on language."""
+        metadata = doc.metadata
+        if self.lang == "ar":
+            return (
+                f"المادة {metadata['article_number']}\n"
+                f"الفصل {metadata['chapter_number']}: {metadata['chapter_name']}\n"
+                f"القسم {metadata['section_number']}: {metadata['section_name']}\n"
+                f"ملخص: {metadata['summary']}\n"
+                f"النص الكامل:\n{doc.page_content}"
+            )
+        else:
+            return (
+                f"Article {metadata['article_number']}\n"
+                f"Chapter {metadata['chapter_number']}: {metadata['chapter_name']}\n"
+                f"Section {metadata['section_number']}: {metadata['section_name']}\n"
+                f"Summary: {metadata['summary']}\n"
+                f"Full Text:\n{doc.page_content}"
+            )
 
     def query(self, question: str, chat_history: List = None) -> Dict[str, Any]:
         """Process a query and return the response with sources."""
         if not self.qa_chain:
             raise ValueError("QA Chain not initialized. Please run setup_chain first.")
         
-        try:
-            response = self.qa_chain({
-                "question": question,
-                "chat_history": chat_history or []
-            })
-            
-            return {
-                "answer": response["answer"],
-                "source_documents": response["source_documents"]
-            }
-        except Exception as e:
-            raise Exception(f"Error during query: {str(e)}")
+        chat_history = chat_history or []
+        response = self.qa_chain({
+            "question": question,
+            "chat_history": chat_history
+        })
+        
+        formatted_sources = [
+            self.format_source_document(doc)
+            for doc in response["source_documents"]
+        ]
+
+        return {
+            "answer": response["answer"],
+            "source_documents": response["source_documents"],
+            "formatted_sources": formatted_sources
+        }
