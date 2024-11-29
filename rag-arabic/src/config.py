@@ -1,28 +1,30 @@
 import os
 from dataclasses import dataclass
-from typing import Optional
+from typing import Literal
 
 @dataclass
 class RAGConfig:
     """Configuration settings for the RAG system."""
-    google_api_key: str
-    openai_api_key:str
-    embedding_model: str = "intfloat/multilingual-e5-large"
-    llm_model: str = "gemini-1.5-pro"
+    openai_api_key: str
+    lang: Literal["ar", "en"] = "ar"  # Default to Arabic
+    embedding_model: str = "text-embedding-3-small"
+    llm_model: str = "gpt-4-turbo-preview"
     chunk_size: int = 500
     chunk_overlap: int = 50
     temperature: float = 0.3
-    persist_directory: str = os.path.abspath("./app/chroma_db2")
-    collection_name: str = "arabic_docs"
 
 def load_config() -> RAGConfig:
     """Load configuration from environment variables."""
-    google_api_key = os.getenv("GOOGLE_API_KEY")
-    if not google_api_key:
-        raise ValueError("GOOGLE_API_KEY environment variable is not set")
-
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY environment variable is not set")
     
-    return RAGConfig(google_api_key=google_api_key,openai_api_key=openai_api_key)
+    # Get language from environment variable, default to Arabic if not set
+    lang = os.getenv("RAG_LANGUAGE", "ar")
+    if lang not in ["ar", "en"]:
+        raise ValueError("RAG_LANGUAGE must be either 'ar' or 'en'")
+    
+    return RAGConfig(
+        openai_api_key=openai_api_key,
+        lang=lang
+    )
