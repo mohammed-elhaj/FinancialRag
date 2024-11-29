@@ -11,7 +11,7 @@ TEMPLATES = {
 
 قم بتقديم إجابة دقيقة ومباشرة مع ذكر رقم المادة والفصل ذي الصلة:""",
         "collection_name": "arabic_docs",
-        "persist_directory": "./app/chroma_db_ar"
+        "persist_directory": "./app/chroma_db2"
     },
     "en": {
         "qa_template": """You are a specialized assistant for answering questions about the Government Tenders and Procurement Law in Saudi Arabia.
