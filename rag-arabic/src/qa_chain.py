@@ -1,6 +1,6 @@
-from typing import Dict, List, Any
+from typing import Dict, Any
 from langchain_openai import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import Chroma
 from .templates import get_prompt_template
 
@@ -19,12 +19,13 @@ class QAChainHandler:
 
     def setup_chain(self, vectorstore: Chroma):
         """Set up the question-answering chain."""
-        self.qa_chain = ConversationalRetrievalChain.from_llm(
+        self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
+            chain_type="stuff",
             retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
             return_source_documents=True,
-            verbose=True,
-            combine_docs_chain_kwargs={"prompt": self.prompt_template}
+            verbose=True , 
+            chain_type_kwargs={"prompt": self.prompt_template}
         )
 
     def format_source_document(self, doc) -> str:
@@ -47,22 +48,18 @@ class QAChainHandler:
                 f"Full Text:\n{doc.page_content}"
             )
 
-    def query(self, question: str, chat_history: List = None) -> Dict[str, Any]:
+    def query(self, question: str) -> Dict[str, Any]:
         """Process a query and return the response with sources."""
         if not self.qa_chain:
             raise ValueError("QA Chain not initialized. Please run setup_chain first.")
         
-        chat_history = chat_history or []
-        response = self.qa_chain({
-            "question": question,
-            "chat_history": chat_history
-        })
+        response = self.qa_chain({"query": question})
         
         formatted_sources = [
             self.format_source_document(doc)
             for doc in response["source_documents"]
         ]
-
+        
         return {
             "answer": response["answer"],
             "source_documents": response["source_documents"],
