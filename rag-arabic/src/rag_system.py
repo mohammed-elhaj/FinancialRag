@@ -28,6 +28,6 @@ class ArabicRAGSystem:
         # Setup QA chain with loaded vectorstore
         self.qa_handler.setup_chain(self.vector_handler.get_vectorstore())
 
-    def query(self, question: str, chat_history: Optional[list] = None) -> Dict[str, Any]:
+    def query(self, question: str) -> Dict[str, Any]:
         """Process a query and return the response."""
-        return self.qa_handler.query(question, chat_history)
+        return self.qa_handler.query(question)
