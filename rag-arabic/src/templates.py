@@ -11,7 +11,7 @@ TEMPLATES = {
 
 قم بتقديم إجابة دقيقة ومباشرة مع ذكر رقم المادة والفصل ذي الصلة:""",
         "collection_name": "arabic_docs",
-        "persist_directory": "./app/chroma_db2"
+        "persist_directory": "./app/chroma_db_ar_final"
     },
     "en": {
         "qa_template": """You are a specialized assistant for answering questions about the Government Tenders and Procurement Law in Saudi Arabia.
@@ -23,7 +23,7 @@ Question: {question}
 
 Provide a precise and direct answer, citing the relevant article and chapter numbers:""",
         "collection_name": "english_docs",
-        "persist_directory": "./app/chroma_db_en"
+        "persist_directory": "./app/chroma_db_final"
     }
 }
 
